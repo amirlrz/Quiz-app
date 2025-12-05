@@ -34,7 +34,7 @@ export default function ShowResult() {
   ];
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-start py-10 bg-gradient-to-br from-purple-400 via-pink-300 to-yellow-300">
+    <div className="relative min-h-screen flex flex-col items-center justify-start py-10 bg-linear-to-br from-purple-400 via-pink-300 to-yellow-300">
       
       <Image
         src="/7469379.jpg"

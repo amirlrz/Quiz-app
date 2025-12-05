@@ -8,6 +8,7 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
+import { RootState } from "@/store";
 
 interface TeacherDashboard {
     categories: string[];      
@@ -17,7 +18,7 @@ interface TeacherDashboard {
 
 export default function TeacherDashboard({ categories, lessonNumbers }:TeacherDashboard) {
   const dispatch = useDispatch();
-  const { category, lesson_number } = useSelector((state) => state.teacherFilterData);
+  const { category, lesson_number } = useSelector((state: RootState) => state.teacherFilterData);
   const [open, setOpen] = useState(false);
 
   //if (userdata?.email?.split("@")[0] !== "ghonche") return null;

@@ -10,6 +10,7 @@ import useAuthHook from '../hooks/useAuthHook';
 import { string } from 'zod';
 import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 
 interface Option {
@@ -34,7 +35,7 @@ export default function GamePage() {
   const [userName, setuserName] = useState<string>("");
   const {getCurrentUserProfile ,insertUserScore}=useAuthHook()
 const route = useRouter()
-const { category, lesson_number } = useSelector((state) => state.teacherFilterData);
+const { category, lesson_number } = useSelector((state: RootState) => state.teacherFilterData);
 
 
   const {data : AllData} = useQuery({

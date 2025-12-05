@@ -1,5 +1,8 @@
+'use client'
+
 import { useSelector } from "react-redux";
 import ProgressBar from "../progressBar/page";
+import { RootState } from "@/store";
 
 
 interface Option {
@@ -34,7 +37,7 @@ interface QuizCardProps {
       'bg-gradient-to-br from-green-400 to-emerald-400 hover:from-green-500 hover:to-emerald-500',
       'bg-gradient-to-br from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500',
     ];
-    const { category, lesson_number } = useSelector((state) => state.teacherFilterData);
+    const { category, lesson_number } = useSelector((state: RootState) => state.teacherFilterData);
 
     //console.log("options" , category);
     //console.log("selectedAnswer" , selectedAnswer);
