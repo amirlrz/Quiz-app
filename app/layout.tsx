@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ReactQueryProvider } from "./components/providers/ReactQueryProvider";
+import ProtectedRoute from "./components/providers/ProtectedRoute";
+import { Toaster } from "react-hot-toast";
+import { ReduxProvider } from "./components/providers/ReduxProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +31,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <ReactQueryProvider >
+          <ProtectedRoute>
+            <ReduxProvider>
         {children}
+            </ReduxProvider>
+        <Toaster position="top-center" reverseOrder={false} />
+        </ProtectedRoute>
+        </ReactQueryProvider>
       </body>
     </html>
   );
