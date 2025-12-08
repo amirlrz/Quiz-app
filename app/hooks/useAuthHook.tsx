@@ -76,6 +76,19 @@ async function login({username, password}:loginType) {
     return true;
   }
 
+  async function insertExamCategory({ category, lesson_number }: { category: string; lesson_number: number}) {
+    const { data, error } = await supabase
+      .from("category")
+      .upsert(
+        {
+          category: category,
+          lesson_number: lesson_number,
+        },
+      );
+  
+    if (error) throw error;
+    return data;
+  }
   async function insertUserScore({ userID, score, userName }: { userID: string; score: number; userName: string }) {
     const { data, error } = await supabase
       .from("profiles")
@@ -111,5 +124,5 @@ async function login({username, password}:loginType) {
     return true;
   }
 
-  return { login, signUp ,signOut ,getUsers,getCurrentUserProfile ,insertUserScore ,getUserScore  };
+  return { login, signUp ,signOut ,getUsers,getCurrentUserProfile ,insertUserScore ,getUserScore ,insertExamCategory  };
 }

@@ -62,7 +62,7 @@ const  {data:userdata }=useQuery({
   const handleAnswerClick = (index: number) => {
     setSelectedAnswer(index);
   };
-  //console.log("userdata", userdata?.id)
+  console.log("data", data)
 
 
 useEffect(() => {

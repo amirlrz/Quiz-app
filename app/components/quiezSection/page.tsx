@@ -39,7 +39,8 @@ interface QuizCardProps {
     ];
     const { category, lesson_number } = useSelector((state: RootState) => state.teacherFilterData);
 
-    //console.log("options" , category);
+    console.log("category" , category);
+    console.log("lesson_number" , lesson_number);
     //console.log("selectedAnswer" , selectedAnswer);
     return (
       <>

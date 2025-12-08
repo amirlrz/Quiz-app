@@ -9,20 +9,43 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { RootState } from "@/store";
+import useAuthHook from "@/app/hooks/useAuthHook";
+import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 interface TeacherDashboard {
     categories: string[];      
     lessonNumbers: number[];
 }
-
+interface insertExamCategoryProp  {
+    lesson_number : number
+    category:string
+}
 
 export default function TeacherDashboard({ categories, lessonNumbers }:TeacherDashboard) {
   const dispatch = useDispatch();
   const { category, lesson_number } = useSelector((state: RootState) => state.teacherFilterData);
   const [open, setOpen] = useState(false);
-
+const { insertExamCategory} =useAuthHook()
   //if (userdata?.email?.split("@")[0] !== "ghonche") return null;
 
+  const { mutate } = useMutation({
+    mutationFn: ({ lesson_number, category } : insertExamCategoryProp) =>
+      insertExamCategory({lesson_number, category}),
+    onSuccess: () => {
+        toast.success(" با موفقیت انجام شد");
+        setOpen(false)
+      },
+      onError: (err) => {
+        if (err instanceof Error) {
+          toast.error(err.message || "خطا❌");
+        } else {
+          toast.error("خطای ناشناخته ❌");
+        }
+      }
+  });
+  
+  
   return (
     <>
    
@@ -67,6 +90,13 @@ export default function TeacherDashboard({ categories, lessonNumbers }:TeacherDa
             ))}
           </Select>
         </FormControl>
+        <button
+  onClick={() => mutate({ lesson_number, category })}
+  className="px-4 py-2 bg-blue-500 text-white rounded-xl"
+>
+  ثبت درس
+</button>
+
       </motion.div>
 
       }
