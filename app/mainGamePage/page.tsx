@@ -99,7 +99,7 @@ const handleNext = () => {
       setShowResults(true);
     }
   };
-  
+  ////
 const handleShowResult = () =>{
     insertScore.mutate(
       { userID, score ,userName},
