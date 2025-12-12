@@ -19,9 +19,6 @@ export default function useAuthHook() {
 return user
     }
   
-
-
-
 async function getUsers() {
   try {
     const res = await fetch("/api/get-users");
@@ -46,7 +43,6 @@ async function login({username, password}:loginType) {
     return true;
   }
   
-
   async function signUp({username, password}:loginType) {
     const fakeEmail = `${username}@game.local`;
   
@@ -121,7 +117,6 @@ async function login({username, password}:loginType) {
     return data;
   }
   
-
   async function getExamCategory() {
     const { data, error } = await supabase
       .from("category")
@@ -181,6 +176,16 @@ async function login({username, password}:loginType) {
   if (error) throw error;
   return data;
 };
+async function resetAllScores() {
+  const { error } = await supabase
+    .from("profiles")
+    .update({ score: 0 })
+    .not("id", "is", null); 
+
+  if (error) throw error;
+
+  return true;
+}
 
 
   async function signOut() {
@@ -191,5 +196,5 @@ async function login({username, password}:loginType) {
     return true;
   }
 
-  return { login, signUp ,signOut ,getUsers,getCurrentUserProfile ,insertUserScore ,getUserScore ,insertExamCategory ,getExamCategory ,getCategoryDrop ,getLesson_numDrop,getLesson_seasonDrop };
+  return { login, signUp ,signOut ,getUsers,getCurrentUserProfile ,insertUserScore ,getUserScore ,insertExamCategory ,getExamCategory ,getCategoryDrop ,getLesson_numDrop,getLesson_seasonDrop,resetAllScores };
 }

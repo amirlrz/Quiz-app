@@ -8,12 +8,15 @@ import boyAnimation from "../../../public/Game Controller.json";
 import Lottie from "lottie-react";
 import Image from "next/image";
 import TeacherDashboard from "../TeacherDashboard/page";
-import { useDispatch } from "react-redux";
-import { useEffect } from "react";
-import { setcategory, setlesson_number } from "@/store/categorySlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useLayoutEffect } from "react";
+import { setcategory, setlesson_number, setlesson_season } from "@/store/categorySlice";
+//import { RootState } from "@/store";
 
 export default function HomePage() {
   const { signOut, getCurrentUserProfile , getExamCategory } = useAuthHook();
+  //const { category, lesson_number ,lesson_season } = useSelector((state: RootState) => state.teacherFilterData);
+
   const route = useRouter();
   const dispatch =useDispatch()
   const { data: userdata } = useQuery({
@@ -25,13 +28,16 @@ export default function HomePage() {
     queryKey:["getCategory"],
     queryFn :getExamCategory
   })
-  useEffect(()=>{
+
+  
+  useLayoutEffect(()=>{
     if(CategoryData){
       dispatch(setlesson_number(CategoryData[0].lesson_number))
       dispatch(setcategory(CategoryData[0].category))
-      dispatch(setcategory(CategoryData[0].lesson_season))
+      dispatch(setlesson_season(CategoryData[0].lesson_season))
     }
   },[])
+  //console.log("first" , category, lesson_number ,lesson_season);
 //console.log("CategoryData" , CategoryData);
 
   return (
