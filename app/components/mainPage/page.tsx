@@ -7,25 +7,33 @@ import { motion } from "framer-motion";
 import boyAnimation from "../../../public/Game Controller.json";
 import Lottie from "lottie-react";
 import Image from "next/image";
-import useQuestionsHooks from "@/app/hooks/useQuestionsHooks";
 import TeacherDashboard from "../TeacherDashboard/page";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { setcategory, setlesson_number } from "@/store/categorySlice";
 
 export default function HomePage() {
-  const { signOut, getCurrentUserProfile } = useAuthHook();
-  const { getQuestions } = useQuestionsHooks();
+  const { signOut, getCurrentUserProfile , getExamCategory } = useAuthHook();
   const route = useRouter();
+  const dispatch =useDispatch()
   const { data: userdata } = useQuery({
     queryKey: ["getCurrentUserProfile"],
     queryFn: getCurrentUserProfile,
   });
-  const {data } = useQuery({
-    queryKey:["getdata"],
-    queryFn :getQuestions
-  })
-//console.log("data" , data);
 
-  const categories = Array.from(new Set(data?.map((q) => q.category) ?? []));
-  const lessonNumbers = Array.from(new Set(data?.map((q) => q.lesson_number) ?? []));
+  const {data:CategoryData } = useQuery({
+    queryKey:["getCategory"],
+    queryFn :getExamCategory
+  })
+  useEffect(()=>{
+    if(CategoryData){
+      dispatch(setlesson_number(CategoryData[0].lesson_number))
+      dispatch(setcategory(CategoryData[0].category))
+      dispatch(setcategory(CategoryData[0].lesson_season))
+    }
+  },[])
+//console.log("CategoryData" , CategoryData);
+
   return (
    <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
          <Image
@@ -52,7 +60,7 @@ className={`${userdata?.email?.split("@")[0] == "ghonche" ? "fixed top-15 left-5
       </motion.button>
       {
         userdata?.email?.split("@")[0] == "ghonche" &&
-       <TeacherDashboard  lessonNumbers={lessonNumbers} categories={categories} />
+       <TeacherDashboard/>
      
       }
    

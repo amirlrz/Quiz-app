@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   category: "",
   lesson_number: 0,
+  lesson_season : 0
 };
 
 const CategorySlice = createSlice({
@@ -15,8 +16,11 @@ const CategorySlice = createSlice({
     setlesson_number: (state, action) => {
       state.lesson_number = action.payload;
     },
+    setlesson_season: (state, action) => {
+      state.lesson_season = action.payload;
+    },
   },
 });
 
-export const { setcategory, setlesson_number } = CategorySlice.actions;
+export const { setcategory, setlesson_number ,setlesson_season } = CategorySlice.actions;
 export default CategorySlice.reducer;

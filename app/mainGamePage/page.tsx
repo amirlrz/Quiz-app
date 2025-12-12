@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import QuizCard from '../components/quiezSection/page';
-
 import {  useMutation, useQuery } from '@tanstack/react-query';
 import useQuestionsHooks from '../hooks/useQuestionsHooks';
 import { useRouter } from 'next/navigation';
@@ -35,7 +34,7 @@ export default function GamePage() {
   const [userName, setuserName] = useState<string>("");
   const {getCurrentUserProfile ,insertUserScore}=useAuthHook()
 const route = useRouter()
-const { category, lesson_number } = useSelector((state: RootState) => state.teacherFilterData);
+const { category, lesson_number ,lesson_season } = useSelector((state: RootState) => state.teacherFilterData);
 
 
   const {data : AllData} = useQuery({
@@ -46,7 +45,8 @@ const { category, lesson_number } = useSelector((state: RootState) => state.teac
   const data = AllData?.filter(
     (item) =>
       (category ? item.category === category : true) &&
-      (lesson_number ? item.lesson_number === lesson_number : true)
+      (lesson_number ? item.lesson_number === lesson_number : true) &&
+      (lesson_season ? item.lesson_season === lesson_season : true)
   );
 
   const insertScore= useMutation({
@@ -62,7 +62,7 @@ const  {data:userdata }=useQuery({
   const handleAnswerClick = (index: number) => {
     setSelectedAnswer(index);
   };
-  console.log("data", data)
+  //console.log("data", data)
 
 
 useEffect(() => {
@@ -71,6 +71,7 @@ useEffect(() => {
       setQuestion(data[currentQuestion].text);
     }
   }, [data, currentQuestion]);
+  
 
   useEffect(() => {
     if (userdata) {

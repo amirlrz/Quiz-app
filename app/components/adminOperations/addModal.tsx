@@ -18,13 +18,15 @@ interface Option {
 interface ModalProps {
   Category: string;
   Lesson: number;
+  season: number;
   onClose: () => void;
 }
 
-export default function AdminAddOperations({ onClose ,Category , Lesson }: ModalProps) {
+export default function AdminAddOperations({ onClose ,Category , Lesson ,season }: ModalProps) {
   const { addQuestion , getQuestions } = useQuestionsHooks();
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedLesson, setSelectedLesson] = useState<number | "">("");
+  const [selectedLesson, setSelectedLesson] = useState<number | "">(0);
+  const [selectedseason, setSelectedseason] = useState<number | "">(0);
   const [questionText, setQuestionText] = useState("");
   const [options, setOptions] = useState<Option[]>([
     { text: "", is_correct: false },
@@ -45,9 +47,10 @@ export default function AdminAddOperations({ onClose ,Category , Lesson }: Modal
   useEffect(() => {
     if (Category) setSelectedCategory(Category);
     if (Lesson) setSelectedLesson(Lesson);
-  }, [Category, Lesson]);
+    if (season) setSelectedseason(season);
+  }, [Category, Lesson , season]);
   
-  //console.log("cat , num" , selectedCategory,selectedLesson ,Category ,Lesson );
+  console.log("cat , num ,  season" , selectedCategory,selectedLesson ,selectedseason );
   
   const addQuestionMutation = useMutation({
     mutationFn: addQuestion,
@@ -56,6 +59,7 @@ export default function AdminAddOperations({ onClose ,Category , Lesson }: Modal
       setQuestionText("");
       setSelectedCategory("");
       setSelectedLesson("");
+      setSelectedseason("");
       onClose()
       setOptions([
         { text: "", is_correct: false },
@@ -86,7 +90,7 @@ export default function AdminAddOperations({ onClose ,Category , Lesson }: Modal
   }
 
   function handleSubmit() {
-    if (!questionText || !selectedCategory || !selectedLesson) {
+    if (!questionText || !selectedCategory || !selectedLesson || !selectedseason) {
       toast.error("لطفاً همه فیلدها را پر کنید");
       return;
     }
@@ -100,6 +104,7 @@ export default function AdminAddOperations({ onClose ,Category , Lesson }: Modal
         text: questionText,
         category: selectedCategory,
         lesson_number: selectedLesson,
+        lesson_season: selectedseason,
         options
       }),
       {

@@ -17,14 +17,13 @@ interface Option {
 }
 
 interface ModalProps {
-  category: string;
-  Lesson: number;
   onClose: () => void;
   detail: {
     id: number;
     text: string;
     category: string;
     lesson_number: number;
+    lesson_season: number;
     options: Option[];
   };
 }
@@ -35,6 +34,7 @@ export default function AdminEditOperations({ onClose, detail }: ModalProps) {
 
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedLesson, setSelectedLesson] = useState<number | "">("");
+  const [selectedseason, setSelectedseason] = useState<number>(0);
   const [questionText, setQuestionText] = useState("");
   const [options, setOptions] = useState<Option[]>([]);
 
@@ -52,6 +52,7 @@ export default function AdminEditOperations({ onClose, detail }: ModalProps) {
       setOptions(detail.options);
       setSelectedCategory(detail.category);
       setSelectedLesson(detail.lesson_number);
+      setSelectedseason(detail.lesson_season);
     }
   }, [detail]);
 
@@ -99,6 +100,7 @@ export default function AdminEditOperations({ onClose, detail }: ModalProps) {
         text: questionText,
         category: selectedCategory,
         lesson_number: selectedLesson,
+        lesson_season: selectedseason,
         options,
       }),
       {

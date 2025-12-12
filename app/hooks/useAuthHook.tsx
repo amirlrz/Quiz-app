@@ -76,19 +76,86 @@ async function login({username, password}:loginType) {
     return true;
   }
 
-  async function insertExamCategory({ category, lesson_number }: { category: string; lesson_number: number}) {
+  async function insertExamCategory({
+    lesson_season,
+    category,
+    lesson_number,
+  }: {
+    lesson_season:number
+    category: string;
+    lesson_number: number;
+  }) {
+    // ببین آیا رکوردی وجود دارد
+    const { data: exists, error: selectError } = await supabase
+      .from("category")
+      .select("*")
+      .limit(1)
+      .maybeSingle();
+  
+    if (selectError) throw selectError;
+  
+    // اگر وجود داشت → آپدیت
+    if (exists) {
+      const { data, error } = await supabase
+        .from("category")
+        .update({
+          lesson_season,
+          category,
+          lesson_number,
+        })
+        .eq("id", exists.id);
+  
+      if (error) throw error;
+      return data;
+    }
+  
+    // اگر وجود نداشت → اینسرت
     const { data, error } = await supabase
       .from("category")
-      .upsert(
-        {
-          category: category,
-          lesson_number: lesson_number,
-        },
-      );
+      .insert({
+        category,
+        lesson_number,
+      });
   
     if (error) throw error;
     return data;
   }
+  
+
+  async function getExamCategory() {
+    const { data, error } = await supabase
+      .from("category")
+      .select("*");
+  
+    if (error) throw error;
+    return data;
+  };
+
+  async function getCategoryDrop() {
+    const { data, error } = await supabase
+      .from("category_Drop")
+      .select("*");
+  
+    if (error) throw error;
+    return data;
+  };
+  async function getLesson_numDrop() {
+    const { data, error } = await supabase
+      .from("lesson_number")
+      .select("*");
+  
+    if (error) throw error;
+    return data;
+  };
+  async function getLesson_seasonDrop() {
+    const { data, error } = await supabase
+      .from("lesson_season")
+      .select("*");
+  
+    if (error) throw error;
+    return data;
+  };
+
   async function insertUserScore({ userID, score, userName }: { userID: string; score: number; userName: string }) {
     const { data, error } = await supabase
       .from("profiles")
@@ -124,5 +191,5 @@ async function login({username, password}:loginType) {
     return true;
   }
 
-  return { login, signUp ,signOut ,getUsers,getCurrentUserProfile ,insertUserScore ,getUserScore ,insertExamCategory  };
+  return { login, signUp ,signOut ,getUsers,getCurrentUserProfile ,insertUserScore ,getUserScore ,insertExamCategory ,getExamCategory ,getCategoryDrop ,getLesson_numDrop,getLesson_seasonDrop };
 }

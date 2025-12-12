@@ -6,7 +6,7 @@ export default function useQuestionsHooks(){
     async function getQuestions() {
         const { data, error } = await supabase
           .from("questions")
-          .select(`id, text, category, lesson_number, options(id, text, is_correct)`)
+          .select(`id, text, category,lesson_season, lesson_number, options(id, text, is_correct)`)
           .order("created_at", { ascending: true });
       
         if (error) throw error;
@@ -20,11 +20,13 @@ async function addQuestion({
   text,
   category,
   lesson_number,
+  lesson_season,
   options
 }: {
   text: string,
   category: string,
   lesson_number: number,
+  lesson_season: number,
   options: { text: string; is_correct: boolean }[]
 }) {
   
@@ -35,7 +37,7 @@ async function addQuestion({
   
   const { data : question ,  error: qErr } = await supabase
     .from("questions")
-    .insert([{ teacher_id ,text, category, lesson_number }])
+    .insert([{ teacher_id ,text, category, lesson_number ,lesson_season }])
     .select()
     .single();
 
@@ -64,18 +66,20 @@ async function editQuestion({
   text,
   category,
   lesson_number,
+  lesson_season,
   options
 }: {
   id: number;
   text: string;
   category: string;
   lesson_number: number;
+  lesson_season: number;
   options: { id?: string; text: string; is_correct: boolean }[];
 }) {
   // update question
   const { error: qError } = await supabase
     .from("questions")
-    .update({ text, category, lesson_number })
+    .update({ text, category, lesson_number ,lesson_season })
     .eq("id", id);
 
   if (qError) throw qError;

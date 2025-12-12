@@ -18,6 +18,7 @@ import AdminDeleteOperations from "../components/adminOperations/deleteModal";
 import CircularProgress from "@mui/material/CircularProgress";
 import AdminAddOperations from "../components/adminOperations/addModal";
 import toast from "react-hot-toast";
+import useAuthHook from "../hooks/useAuthHook";
 
 interface Option {
   text: string;
@@ -28,25 +29,38 @@ interface DetailType {
   text: string;
   category: string;
   lesson_number: number;
+  lesson_season: number;
   options:Option[];
 }
 export default function TeacherAddQuestionPage() {
   const { getQuestions } = useQuestionsHooks();
-
+const { getCategoryDrop ,getLesson_numDrop ,getLesson_seasonDrop} =useAuthHook()
   const {data ,isLoading} = useQuery({
     queryKey:["getdata"],
     queryFn :getQuestions
   })
-//console.log("data" , data);
 
-  const categories = Array.from(new Set(data?.map((q) => q.category) ?? []));
-  const lessonNumbers = Array.from(new Set(data?.map((q) => q.lesson_number) ?? []));
+  const {data :lesson_field}= useQuery({
+    queryKey:["getcategorydrop"],
+    queryFn: getCategoryDrop
+  })
+  const {data :lesson_num}= useQuery({
+    queryKey:["getlesson_numdrop"],
+    queryFn: getLesson_numDrop
+  })
+  const {data :lessonseason}= useQuery({
+    queryKey:["getLesson_seasonDrop"],
+    queryFn: getLesson_seasonDrop
+  })
+console.log("data" , data);
+
   const [addOpenModal, setaddOpenModal] = React.useState(false);
   const [EditModal, setEditModal] = React.useState(false);
   const [DeleteModal, setDeleteModal] = React.useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [FilterData, setFilterData] = useState<DetailType[]>([]);
   const [selectedLesson, setSelectedLesson] = useState<number>(0);
+  const [selectedlesson_season, setlesson_season] = useState<number>(0);
   const [SelectedRow, setSelectedRow] = useState<DetailType>();
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     pageSize: 10,
@@ -58,15 +72,17 @@ export default function TeacherAddQuestionPage() {
   
     const filtered = data.filter(q =>
       (!selectedCategory || q.category === selectedCategory) &&
-      (!selectedLesson || q.lesson_number === selectedLesson)
+      (!selectedLesson || q.lesson_number === selectedLesson) && 
+      (!selectedlesson_season || q.lesson_season === selectedlesson_season) 
     );
   
     setFilterData(filtered);
   
     console.log("rendered" , filtered);
-  }, [data, selectedCategory, selectedLesson]);
+  }, [data, selectedCategory, selectedLesson ,selectedlesson_season]);
   
   
+console.log("selectedlesson_season", selectedlesson_season);
 
   const columns: GridColDef[] = [
     //{ field: "order_number", headerName: "ردیف", width: 70 },
@@ -108,28 +124,13 @@ export default function TeacherAddQuestionPage() {
   ];
 
   //console.log("categories", categories);
-  console.log("category" ,selectedCategory);
+  //console.log("category" ,selectedCategory);
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-start bg-gray-100 p-4 md:p-8">
+    <div className="relative min-h-screen flex flex-col items-center justify-start bg-gray-100 p-4 md:p-8" dir="rtl">
     {/* کارت فیلترها */}
-    <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-      <FormControl
-        sx={{ direction: "rtl" }}
-        fullWidth
-        className="bg-white rounded-xl shadow p-2"
-      >
-        <InputLabel sx={{ textAlign: "right" }}>شماره درس</InputLabel>
-        <Select
-          value={selectedLesson}
-          onChange={(e) => setSelectedLesson(Number(e.target.value))}
-          className="bg-white rounded-xl"
-        >
-          {lessonNumbers.map((ln) => (
-            <MenuItem key={ln} value={ln}>{ln}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+    <div className="w-full grid grid-cols-1 md:grid-cols-3  gap-4 mb-4">
+    
   
       <FormControl 
         sx={{ direction: "rtl" }}
@@ -142,9 +143,49 @@ export default function TeacherAddQuestionPage() {
           onChange={(e) => setSelectedCategory(e.target.value)}
           className="bg-white rounded-xl"
         >
-          {categories.map((cat) => (
-            <MenuItem key={cat} value={cat}>{cat}</MenuItem>
-          ))}
+           {lesson_field?.map((item) => (
+      <MenuItem key={item.id} value={item.category}>
+        {item.category}
+      </MenuItem>
+    ))}
+        </Select>
+      </FormControl>
+
+
+      <FormControl 
+        sx={{ direction: "rtl" }}
+        fullWidth
+        className="bg-white rounded-xl shadow p-2"
+      >
+        <InputLabel sx={{ textAlign: "right" }}>فصل </InputLabel>
+        <Select
+          value={selectedlesson_season}
+          onChange={(e) => setlesson_season(e.target.value)}
+          className="bg-white rounded-xl"
+        >
+          {lessonseason?.map((item) => (
+      <MenuItem key={item.id} value={item.lesson_season}>
+        {item.lesson_season}
+      </MenuItem>
+    ))}
+        </Select>
+      </FormControl>
+      <FormControl
+        sx={{ direction: "rtl" }}
+        fullWidth
+        className="bg-white rounded-xl shadow p-2"
+      >
+        <InputLabel sx={{ textAlign: "right" }}>شماره درس</InputLabel>
+        <Select
+          value={selectedLesson}
+          onChange={(e) => setSelectedLesson(Number(e.target.value))}
+          className="bg-white rounded-xl"
+        >
+          {lesson_num?.map((item) => (
+      <MenuItem key={item.id} value={item.lesson_num}>
+        {item.lesson_num}
+      </MenuItem>
+    ))}
         </Select>
       </FormControl>
     </div>
@@ -156,7 +197,7 @@ export default function TeacherAddQuestionPage() {
         <h2 className="text-2xl font-bold text-gray-700">لیست سوالات</h2>
         <button
          onClick={() => {
-          if (selectedCategory && selectedLesson) {
+          if (selectedCategory && selectedLesson && selectedlesson_season) {
             setaddOpenModal(true);
           } else {
             toast.error("لطفا فیلتر انتخاب کنید");
@@ -202,7 +243,11 @@ export default function TeacherAddQuestionPage() {
         PaperProps={{ sx: { backgroundColor: "rgba(0,0,0,0.5)" } }}
       >
         <DialogContent sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <AdminAddOperations Category={selectedCategory} Lesson={selectedLesson}  onClose={() => setaddOpenModal(false)} />
+          <AdminAddOperations 
+          Category={selectedCategory}
+           Lesson={selectedLesson}
+              season={selectedlesson_season}
+                onClose={() => setaddOpenModal(false)} />
         </DialogContent>
       </Dialog>
       <Dialog
@@ -214,8 +259,6 @@ export default function TeacherAddQuestionPage() {
         {SelectedRow && (
   <AdminEditOperations
     detail={SelectedRow}
-    category={selectedCategory}
-    Lesson={selectedLesson}
     onClose={() => setEditModal(false)}
   />
 )}
