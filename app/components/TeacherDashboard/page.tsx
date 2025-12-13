@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
 import { setcategory, setlesson_number, setlesson_season } from "@/store/categorySlice";
 import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { RootState } from "@/store";

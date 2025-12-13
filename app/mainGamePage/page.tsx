@@ -8,8 +8,10 @@ import { useRouter } from 'next/navigation';
 import useAuthHook from '../hooks/useAuthHook';
 import { string } from 'zod';
 import toast from 'react-hot-toast';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store';
+import { setcategory, setlesson_number, setlesson_season } from '@/store/categorySlice';
+import LinearProgress from '@mui/material/LinearProgress';
 
 
 interface Option {
@@ -32,16 +34,33 @@ export default function GamePage() {
   const [question, setQuestion] = useState<string>("");
   const [userID, setuserID] = useState<string>("");
   const [userName, setuserName] = useState<string>("");
-  const {getCurrentUserProfile ,insertUserScore}=useAuthHook()
+  const {getCurrentUserProfile ,insertUserScore ,getExamCategory}=useAuthHook()
 const route = useRouter()
 const { category, lesson_number ,lesson_season } = useSelector((state: RootState) => state.teacherFilterData);
 
+const dispatch =useDispatch()
+
+    const {data:CategoryData } = useQuery({
+      queryKey:["getCategory"],
+      queryFn :getExamCategory
+    })
+  
+    
+    useEffect(() => {
+      if (CategoryData && CategoryData.length > 0) {
+        dispatch(setlesson_number(CategoryData[0].lesson_number))
+        dispatch(setcategory(CategoryData[0].category))
+        dispatch(setlesson_season(CategoryData[0].lesson_season))
+      }
+    }, [CategoryData, dispatch])
 
   const {data : AllData} = useQuery({
     queryKey:["getdata"],
-    queryFn :getQuestions
+    queryFn :getQuestions,
+    enabled: !!category && !!lesson_number && !!lesson_season,
   })
-
+ 
+  
   const data = AllData?.filter(
     (item) =>
       (category ? item.category === category : true) &&
@@ -145,7 +164,13 @@ const handleShowResult = () =>{
       </div>
     );
   }
-
+  if (!category || !AllData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LinearProgress color="secondary" />
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-linear-to-br from-blue-400 via-purple-300 to-pink-300 flex items-center justify-center p-4">
       <QuizCard

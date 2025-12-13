@@ -13,6 +13,26 @@ export default function useQuestionsHooks(){
         return data;
         
       }
+      //عکس سوال
+      const uploadQuestionImage = async (file: File) => {
+        const fileName = `${Date.now()}-${file.name}`;
+      
+        // آپلود فایل به bucket
+        const {  error } = await supabase.storage
+          .from("question-images")
+          .upload(fileName, file);
+      
+        if (error) throw error;
+      
+        // گرفتن URL عمومی
+        const { data: publicUrl } = supabase.storage
+          .from("question-images")
+          .getPublicUrl(fileName);
+      
+        return publicUrl.publicUrl;
+      };
+      
+
 
       // ۲️⃣ اضافه کردن یک سوال جدید
 // --------------------------------------
@@ -21,10 +41,12 @@ async function addQuestion({
   category,
   lesson_number,
   lesson_season,
+  question_image_url,
   options
 }: {
   text: string,
   category: string,
+  question_image_url: string | null,
   lesson_number: number,
   lesson_season: number,
   options: { text: string; is_correct: boolean }[]
@@ -37,7 +59,7 @@ async function addQuestion({
   
   const { data : question ,  error: qErr } = await supabase
     .from("questions")
-    .insert([{ teacher_id ,text, category, lesson_number ,lesson_season }])
+    .insert([{ teacher_id ,text, category, lesson_number ,lesson_season ,question_image_url }])
     .select()
     .single();
 
@@ -114,5 +136,5 @@ async function editQuestion({
   }
   
   
-    return {deleteQuestion , addQuestion ,getQuestions , editQuestion}
+    return {deleteQuestion , addQuestion ,getQuestions , editQuestion, uploadQuestionImage}
 }
