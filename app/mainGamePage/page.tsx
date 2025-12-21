@@ -32,6 +32,7 @@ export default function GamePage() {
   const [showResults, setShowResults] = useState(false);
   const [Options, setOptions] = useState<Option[]>([]);
   const [question, setQuestion] = useState<string>("");
+  const [ImageUrl, setImageUrl] = useState<string>("");
   const [userID, setuserID] = useState<string>("");
   const [userName, setuserName] = useState<string>("");
   const {getCurrentUserProfile ,insertUserScore ,getExamCategory}=useAuthHook()
@@ -60,6 +61,8 @@ const dispatch =useDispatch()
     enabled: !!category && !!lesson_number && !!lesson_season,
   })
  
+ 
+  
   
   const data = AllData?.filter(
     (item) =>
@@ -67,6 +70,7 @@ const dispatch =useDispatch()
       (lesson_number ? item.lesson_number === lesson_number : true) &&
       (lesson_season ? item.lesson_season === lesson_season : true)
   );
+  console.log("data" ,data);
 
   const insertScore= useMutation({
     mutationKey :["SetScore"],
@@ -88,6 +92,7 @@ useEffect(() => {
     if (data && data[currentQuestion]) {
       setOptions(data[currentQuestion].options);
       setQuestion(data[currentQuestion].text);
+      setImageUrl(data[currentQuestion].question_image_url);
     }
   }, [data, currentQuestion]);
   
@@ -174,6 +179,7 @@ const handleShowResult = () =>{
   return (
     <div className="min-h-screen bg-linear-to-br from-blue-400 via-purple-300 to-pink-300 flex items-center justify-center p-4">
       <QuizCard
+      ImageUrl={ImageUrl ?? ''}
          question={question ?? ""}
         options={Options}
         selectedAnswer={selectedAnswer}

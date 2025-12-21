@@ -6,7 +6,7 @@ export default function useQuestionsHooks(){
     async function getQuestions() {
         const { data, error } = await supabase
           .from("questions")
-          .select(`id, text, category,lesson_season, lesson_number, options(id, text, is_correct)`)
+          .select(`id, text, category,lesson_season, lesson_number, options(id, text, is_correct) ,question_image_url`)
           .order("created_at", { ascending: true });
       
         if (error) throw error;

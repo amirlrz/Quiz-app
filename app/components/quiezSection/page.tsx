@@ -3,6 +3,7 @@
 import { useSelector } from "react-redux";
 import ProgressBar from "../progressBar/page";
 import { RootState } from "@/store";
+import Image from "next/image";
 
 
 interface Option {
@@ -13,6 +14,7 @@ interface Option {
   
 
 interface QuizCardProps {
+  ImageUrl:string
     question: string;
     options: Option[]; 
     selectedAnswer: number | null;
@@ -23,6 +25,7 @@ interface QuizCardProps {
   }
   
   export default function QuizCard({
+    ImageUrl,
     question,
     options,
     selectedAnswer,
@@ -41,12 +44,18 @@ interface QuizCardProps {
 
     //console.log("category" , category);
     //console.log("lesson_number" , lesson_number);
-    //console.log("selectedAnswer" , selectedAnswer);
+    console.log("ImageUrl" , ImageUrl);
     return (
       <>
 
-      <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-4xl w-full">
-        {/* Progress */}
+<div
+  className={`
+    bg-white rounded-3xl max-w-4xl w-full shadow-2xl
+    ${ImageUrl ? "p-1" : "p-8"}
+    md:p-8
+  `}
+>
+
         <div
   className="
     fixed top-0 left-1/2 -translate-x-1/2
@@ -54,11 +63,11 @@ interface QuizCardProps {
     text-purple-900
     rounded-3xl shadow-xl
     font-bold
-    p-3 md:p-1
-    flex mb-3 md:flex-row
+    p-1 md:p-1
+    flex mb-2 md:flex-row
     items-center md:items-center
     gap-2 md:gap-4
-    text-md md:text-2xl
+    text-md md:text-md
     w-[90%] md:w-auto
     justify-center
     animate-bounce-slow
@@ -72,30 +81,45 @@ interface QuizCardProps {
 
 
         <div className="mb-6 text-center text-purple-600 font-sans">
-          <p className="font-extrabold text-2xl">
+          <p className="font-extrabold text-xl">
          سوال {currentQuestion}
             </p>
           <ProgressBar totalQuestions={totalQuestions} currentQuestion={currentQuestion}/>
         </div>
   
         {/* Question Box */}
-        <div className="bg-linear-to-r from-purple-500 to-pink-500 rounded-2xl p-8 mb-8 shadow-lg">
-          <p className="text-white text-center text-2xl">{question}</p>
-        </div>
-  
+    {/* Image Section */}
+{ImageUrl && (
+  <div className="relative mb-1 w-full h-40 rounded-md overflow-hidden bg-white shadow-lg">
+    <Image
+      src={ImageUrl}
+      alt="preview"
+      fill
+      className="object-contain"
+    />
+  </div>
+)}
+
+{/* Question Box */}
+<div className="bg-linear-to-r md:p-6 from-purple-400 to-pink-800 rounded-md p-4 mb-3 shadow-lg">
+  <p className="text-white text-center text-md">
+    {question}
+  </p>
+</div>
+
         {/* Answer Options */}
-        <div className="grid grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-2 gap-2 mb-4">
           {options.map((option, index) => (
             <button
             key={index}
             onClick={() => onAnswerClick(index)}           
-            className={`${colors[index]} text-white p-8 rounded-3xl transition-all duration-200 hover:scale-105 ${
+            className={`${colors[index]} text-white p-4 md:p-6 rounded-3xl transition-all duration-200 hover:scale-105 ${
               selectedAnswer === index
-              ? 'ring-1 ring-purple-500 scale-105 animate-pulse'
+              ? 'ring-1 ring-purple-500 scale-100 animate-pulse'
               : ''
             }`}
             >
-              <span className="text-xl">{option.text}</span>
+              <span className="text-md">{option.text}</span>
             </button>
           ))}
         </div>
