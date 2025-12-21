@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 import ProgressBar from "../progressBar/page";
 import { RootState } from "@/store";
 import Image from "next/image";
+import { useState } from "react";
+import Skeleton from "@mui/material/Skeleton";
 
 
 interface Option {
@@ -41,6 +43,7 @@ interface QuizCardProps {
       'bg-gradient-to-br from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500',
     ];
     const { category, lesson_number , lesson_season } = useSelector((state: RootState) => state.teacherFilterData);
+    const [imageLoading, setImageLoading] = useState(true);
 
     //console.log("category" , category);
     //console.log("lesson_number" , lesson_number);
@@ -89,13 +92,28 @@ interface QuizCardProps {
   
         {/* Question Box */}
     {/* Image Section */}
+    
 {ImageUrl && (
+  
   <div className="relative mb-1 w-full h-40 rounded-md overflow-hidden bg-white shadow-lg">
+    
+    {imageLoading && (
+      <Skeleton
+        variant="rectangular"
+        width="100%"
+        height="100%"
+        animation="wave"
+        className="absolute inset-0"
+      />
+    )}
     <Image
       src={ImageUrl}
       alt="preview"
       fill
-      className="object-contain"
+      className={`object-contain transition-opacity duration-300 ${
+        imageLoading ? "opacity-0" : "opacity-100"
+      }`}
+      onLoadingComplete={() => setImageLoading(false)}
     />
   </div>
 )}
